@@ -1,0 +1,9 @@
+﻿node_modules/.bin
+node_modules/.cache
+.env
+*.log
+.git
+.gitignore
+src
+tests
+tsconfig.json

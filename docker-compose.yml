@@ -1,0 +1,127 @@
+services:
+  # ---------- Infrastructure ----------
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5433:5432"
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+      - ./scripts/init-databases.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  # ---------- Application Services ----------
+  auth-service:
+    build:
+      context: ./apps/auth-service
+      dockerfile: Dockerfile
+    ports:
+      - "3001:3001"
+    environment:
+      NODE_ENV: development
+      JWT_SECRET: secret_key
+      AUTH_DB_URL: postgresql://user:password@postgres:5432/auth_db
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:-}
+      GOOGLE_CALLBACK_URL: http://localhost:3000/api/auth/google/callback
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+
+  user-service:
+    build:
+      context: ./apps/user-service
+      dockerfile: Dockerfile
+    ports:
+      - "3002:3002"
+    environment:
+      NODE_ENV: development
+      JWT_SECRET: secret_key
+      USER_DB_URL: postgresql://user:password@postgres:5432/user_db
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+
+  task-service:
+    build:
+      context: ./apps/task-service
+      dockerfile: Dockerfile
+    ports:
+      - "3003:3003"
+    environment:
+      NODE_ENV: development
+      JWT_SECRET: secret_key
+      TASK_DB_URL: postgresql://user:password@postgres:5432/task_db
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+
+  notification-service:
+    build:
+      context: ./apps/notification-service
+      dockerfile: Dockerfile
+    ports:
+      - "3004:3004"
+    environment:
+      NODE_ENV: development
+      JWT_SECRET: secret_key
+    depends_on:
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+
+  file-service:
+    build:
+      context: ./apps/file-service
+      dockerfile: Dockerfile
+    ports:
+      - "3005:3005"
+    environment:
+      NODE_ENV: development
+      JWT_SECRET: secret_key
+    restart: unless-stopped
+
+  # ---------- API Gateway (depends on all services) ----------
+  api-gateway:
+    build:
+      context: ./apps/api-gateway
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: development
+      JWT_SECRET: secret_key
+      AUTH_SERVICE_URL: http://auth-service:3001
+      USER_SERVICE_URL: http://user-service:3002
+      TASK_SERVICE_URL: http://task-service:3003
+      NOTIFICATION_SERVICE_URL: http://notification-service:3004
+      FILE_SERVICE_URL: http://file-service:3005
+    depends_on:
+      - auth-service
+      - user-service
+      - task-service
+      - notification-service
+      - file-service
+    restart: unless-stopped
+
+volumes:
+  pg_data:
