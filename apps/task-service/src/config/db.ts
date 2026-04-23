@@ -6,7 +6,7 @@ import logger from '../utils/logger';
 dotenv.config();
 
 const pool = new Pool({
-  connectionString: process.env.AUTH_DB_URL,
+  connectionString: process.env.TASK_DB_URL,
 });
 
 pool.on('connect', () => {

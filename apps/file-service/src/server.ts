@@ -4,6 +4,7 @@ import helmet from 'helmet';
 import dotenv from 'dotenv';
 import logger from './utils/logger';
 import errorHandler from './middlewares/error.middleware';
+import fileRoutes from './routes/file.routes';
 
 dotenv.config();
 
@@ -19,7 +20,11 @@ app.get('/health', (req, res) => {
   res.json({ status: 'ok', service: 'file-service' });
 });
 
+// Routes
+app.use('/api/files', fileRoutes);
+
 app.use(errorHandler);
+
 
 app.listen(PORT, () => {
   logger.info(`File Service running on port ${PORT}`);

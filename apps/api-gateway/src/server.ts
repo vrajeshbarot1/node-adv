@@ -6,6 +6,7 @@ import dotenv from 'dotenv';
 import logger from './utils/logger';
 import errorHandler from './middlewares/error.middleware';
 import https from 'https';
+import { rateLimit } from 'express-rate-limit';
 
 dotenv.config();
 
@@ -13,7 +14,23 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const ENABLE_HTTPS = process.env.ENABLE_HTTPS === 'true';
 
+// Rate limiting
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // Limit each IP to 100 requests per `window` (here, per 15 minutes)
+  standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+  legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+  message: {
+    success: false,
+    message: 'Too many requests from this IP, please try again after 15 minutes'
+  }
+});
+
+// Apply the rate limiting middleware to all requests
+app.use(limiter);
+
 app.use(helmet());
+
 app.use(cors());
 
 // Health check
