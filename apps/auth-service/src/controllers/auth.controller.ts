@@ -1,7 +1,7 @@
 import type { Request, Response, NextFunction } from 'express';
-import { 
-  register as authRegister, 
-  login as authLogin, 
+import {
+  register as authRegister,
+  login as authLogin,
   refresh as authRefresh,
   setup2FA as authSetup2FA,
   verify2FA as authVerify2FA,
@@ -151,5 +151,3 @@ export const login2FA = async (req: Request, res: Response, next: NextFunction) 
     next(error);
   }
 };
-
-

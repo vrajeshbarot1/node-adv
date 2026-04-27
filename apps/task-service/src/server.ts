@@ -5,8 +5,13 @@ import dotenv from 'dotenv';
 import logger from './utils/logger';
 import errorHandler from './middlewares/error.middleware';
 import taskRoutes from './routes/task.routes';
+import { connectRabbitMQ } from './utils/rabbitmq';
+import { connectRedis } from './utils/redis';
 
 dotenv.config();
+
+connectRabbitMQ();
+connectRedis();
 
 const app = express();
 const PORT = process.env.PORT || 3003;

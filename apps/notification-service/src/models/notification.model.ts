@@ -22,3 +22,9 @@ export const markAsRead = async (id: string): Promise<INotification> => {
     data: { isRead: true }
   }) as unknown as INotification;
 };
+
+export const getAllNotifications = async (): Promise<INotification[]> => {
+  return await prisma.notification.findMany({
+    orderBy: { createdAt: 'desc' }
+  }) as unknown as INotification[];
+};

@@ -5,8 +5,11 @@ import dotenv from 'dotenv';
 import logger from './utils/logger';
 import errorHandler from './middlewares/error.middleware';
 import notificationRoutes from './routes/notification.routes';
+import { connectRabbitMQ } from './utils/rabbitmq';
 
 dotenv.config();
+
+connectRabbitMQ();
 
 const app = express();
 const PORT = process.env.PORT || 3004;

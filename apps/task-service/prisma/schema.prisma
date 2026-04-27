@@ -18,7 +18,8 @@ model Task {
   title       String
   description String?
   status      Status   @default(PENDING)
-  userId      String   // ID of the user who owns the task
+  userId      String   // The employee assigned to the task
+  creatorId   String   // The manager who created the task
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }

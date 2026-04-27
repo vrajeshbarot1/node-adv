@@ -1,9 +1,7 @@
-﻿node_modules/.bin
-node_modules/.cache
+node_modules
+dist
 .env
-*.log
+Dockerfile
+.dockerignore
 .git
 .gitignore
-src
-tests
-tsconfig.json

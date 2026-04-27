@@ -1,38 +1,30 @@
-import { PrismaClient } from "@prisma/client";
-import { ITask, ICreateTaskRequest, IUpdateTaskRequest } from "../types/task.types";
+import { PrismaClient, Prisma } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-export const createTask = async (userId: string, data: ICreateTaskRequest): Promise<ITask> => {
-  return await prisma.task.create({
-    data: {
-      ...data,
-      userId
-    }
-  }) as unknown as ITask;
+export const createTask = async (data: any) => {
+  return await prisma.task.create({ data });
 };
 
-export const findTasksByUserId = async (userId: string): Promise<ITask[]> => {
-  return await prisma.task.findMany({
-    where: { userId }
-  }) as unknown as ITask[];
+export const findTaskById = async (id: string) => {
+  return await prisma.task.findUnique({ where: { id } });
 };
 
-export const findTaskById = async (taskId: string): Promise<ITask | null> => {
-  return await prisma.task.findUnique({
-    where: { id: taskId }
-  }) as unknown as ITask | null;
-};
-
-export const updateTask = async (taskId: string, data: IUpdateTaskRequest): Promise<ITask> => {
+export const updateTask = async (id: string, data: any) => {
   return await prisma.task.update({
-    where: { id: taskId },
+    where: { id },
     data
-  }) as unknown as ITask;
+  });
 };
 
-export const deleteTask = async (taskId: string): Promise<void> => {
-  await prisma.task.delete({
-    where: { id: taskId }
-  });
+export const findTasksByCreator = async (creatorId: string) => {
+  return await prisma.task.findMany({ where: { creatorId } });
+};
+
+export const findTasksByUser = async (userId: string) => {
+  return await prisma.task.findMany({ where: { userId } });
+};
+
+export const deleteTask = async (id: string) => {
+  return await prisma.task.delete({ where: { id } });
 };

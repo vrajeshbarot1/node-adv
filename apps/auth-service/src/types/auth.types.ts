@@ -7,17 +7,16 @@ export interface IJWTPayload {
 export interface IUser {
   id: string;
   email: string;
-  username?: string | null;
   password: string;
-  role: string;
-  permissions: string[];
   refreshToken?: string | null;
+  twoFactorSecret?: string | null;
+  twoFactorEnabled: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
 
 export interface IAuthResponse {
-  user?: Omit<IUser, 'password' | 'refreshToken' | 'twoFactorSecret'>;
+  user?: Omit<IUser, 'password' | 'refreshToken' | 'twoFactorSecret'> & { username?: string; role?: string; permissions?: string[] };
   token?: string;
   refreshToken?: string;
   mfaRequired?: boolean;
@@ -30,6 +29,7 @@ export interface IRegisterRequest {
   password: string;
   role?: string;
   permissions?: string[];
+  managerId?: string;
 }
 
 export interface ILoginRequest {

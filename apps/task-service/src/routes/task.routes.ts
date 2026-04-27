@@ -1,16 +1,19 @@
 import { Router } from 'express';
 import * as TaskController from '../controllers/task.controller';
 import authMiddleware from '../middlewares/auth.middleware';
+import authorize from '../middlewares/authorize.middleware';
 
 const router = Router();
 
-// All task routes require authentication
+// Apply auth middleware to all task routes
 router.use(authMiddleware);
 
-router.post('/', TaskController.createTask);
-router.get('/', TaskController.getTasks);
-router.get('/:id', TaskController.getTaskById);
-router.put('/:id', TaskController.updateTask);
-router.delete('/:id', TaskController.deleteTask);
+// Manager Routes
+router.post('/', authorize(['MANAGER', 'ADMIN']), TaskController.createTask);
+router.get('/team', authorize(['MANAGER', 'ADMIN']), TaskController.getTeamTasks);
+router.patch('/:id', authorize(['MANAGER', 'ADMIN']), TaskController.updateTask);
+
+// User Routes
+router.get('/my-tasks', TaskController.getMyTasks);
 
 export default router;

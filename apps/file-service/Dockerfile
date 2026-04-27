@@ -1,10 +1,16 @@
-﻿FROM node:20-alpine
+FROM node:20-alpine
+
+RUN apk add --no-cache openssl
 
 WORKDIR /app
 
-COPY package.json ./
-COPY node_modules ./node_modules
-COPY dist ./dist
+COPY package*.json ./
+
+RUN npm install
+
+COPY . .
+
+RUN npm run build
 
 EXPOSE 3005
 

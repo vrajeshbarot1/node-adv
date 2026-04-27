@@ -9,6 +9,7 @@ router.post('/', NotificationController.createNotification);
 
 // User endpoints
 router.get('/', authMiddleware, NotificationController.getNotifications);
+router.get('/all', authMiddleware, NotificationController.getAllNotifications);
 router.patch('/:id/read', authMiddleware, NotificationController.markAsRead);
 
 export default router;

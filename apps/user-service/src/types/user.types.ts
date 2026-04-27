@@ -6,7 +6,6 @@ export enum Role {
 
 export interface IUser {
   id: string;
-  email: string;
   username?: string | null;
   role: Role;
   permissions: string[];
@@ -15,10 +14,17 @@ export interface IUser {
   updatedAt: Date;
 }
 
-export interface IUpdateRoleRequest {
-  role: Role;
+export interface ICreateUserRequest {
+  id: string;
+  username?: string;
+  role?: Role;
+  permissions?: string[];
+  managerId?: string;
 }
 
-export interface IUpdatePermissionsRequest {
-  permissions: string[];
+export interface IUpdateUserRequest {
+  username?: string;
+  role?: Role;
+  permissions?: string[];
+  managerId?: string | null;
 }

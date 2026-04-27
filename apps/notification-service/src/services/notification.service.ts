@@ -12,3 +12,7 @@ export const getNotifications = async (userId: string): Promise<INotification[]>
 export const markRead = async (id: string): Promise<INotification> => {
   return await NotificationModel.markAsRead(id);
 };
+
+export const getAllNotifications = async (): Promise<INotification[]> => {
+  return await NotificationModel.getAllNotifications();
+};

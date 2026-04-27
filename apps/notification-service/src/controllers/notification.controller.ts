@@ -28,3 +28,12 @@ export const markAsRead = async (req: Request, res: Response, next: NextFunction
     next(error);
   }
 };
+
+export const getAllNotifications = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const notifications = await NotificationService.getAllNotifications();
+    res.status(200).json({ success: true, data: notifications });
+  } catch (error) {
+    next(error);
+  }
+};
